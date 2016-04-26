@@ -1,11 +1,12 @@
 package com.Josh;
 
 import java.sql.*;
+import java.util.Scanner;
 
 public class Main {
 
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";        //Configure the driver needed
-    static final String DB_CONNECTION_URL = "jdbc:mysql://localhost:3306/vet";     //Connection string – where's the database?
+    static final String DB_CONNECTION_URL = "jdbc:mysql://localhost:3306/animals";     //Connection string – where's the database?
     static final String USER = "root";   //TODO replace with your username
     static final String PASSWORD = "root";   //TODO replace with your password
 
@@ -74,14 +75,38 @@ public class Main {
             psInsert.close();
 
 
+            //Getting input from user of what dog to search for//
 
-            String fetchAllDataSQL = "SELECT * FROM Dogs";
-            rs = statement.executeQuery(fetchAllDataSQL);
+            System.out.println("Enter dog's name:");
+            Scanner searchNameScanner = new Scanner(System.in);
+            String  searchName = searchNameScanner.nextLine();
+            String searchForDogByName = "SELECT * FROM Dogs WHERE Name = ? ";
+            PreparedStatement searchStatement = conn.prepareStatement(searchForDogByName);
+
+            searchStatement.setString(1, searchName);
+            rs = searchStatement.executeQuery();
+            System.out.println("Results for search...");
+            int numberOfResults = 0;
+
             while (rs.next()) {
+                numberOfResults++;
                 String dogName = rs.getString("Name");
                 int dogAge = rs.getInt("Age");
-                System.out.println("Dog name = " + dogName + " dog age = " + dogAge);
+                System.out.println("Dog name = " + dogName + " Dog age " + dogAge);
+
             }
+
+            if (numberOfResults == 0) {
+                System.out.println("No dog found for that name");
+            }
+
+//            String fetchAllDataSQL = "SELECT * FROM Dogs";
+//            rs = statement.executeQuery(fetchAllDataSQL);
+//            while (rs.next()) {
+//                String dogName = rs.getString("Name");
+//                int dogAge = rs.getInt("Age");
+//                System.out.println("Dog name = " + dogName + " dog age = " + dogAge);
+//            }
 
             /** End of new code here **/
 
